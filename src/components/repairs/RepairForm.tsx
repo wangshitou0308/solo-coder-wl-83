@@ -3,12 +3,14 @@ import { useStore } from '@/store/useStore';
 import type { IssueType } from '@/types';
 import { ISSUE_LIST } from '@/types';
 import { ISSUE_COLORS } from '@/types';
-import { X } from 'lucide-react';
+import { X, AlertCircle, LayoutGrid } from 'lucide-react';
 
 interface RepairFormProps {
   onClose: () => void;
   defaultWallId?: string;
 }
+
+const today = new Date().toISOString().split('T')[0];
 
 export default function RepairForm({ onClose, defaultWallId }: RepairFormProps) {
   const { walls, addRepair } = useStore();
@@ -23,6 +25,7 @@ export default function RepairForm({ onClose, defaultWallId }: RepairFormProps) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.wallId || walls.length === 0) return;
     addRepair(form);
     onClose();
   };
@@ -40,35 +43,53 @@ export default function RepairForm({ onClose, defaultWallId }: RepairFormProps) 
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-140px)]">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="label">墙面</label>
-              <select
-                className="input-field"
-                value={form.wallId}
-                onChange={(e) => setForm({ ...form, wallId: e.target.value })}
-              >
-                {walls.map((w) => {
-                  const room = useStore.getState().getRoomById(w.roomId);
-                  return (
-                    <option key={w.id} value={w.id}>
-                      {room?.name} - {w.name}
-                    </option>
-                  );
-                })}
-              </select>
+        {walls.length === 0 ? (
+          <div className="p-12 text-center">
+            <div className="w-16 h-16 mx-auto rounded-full bg-sand-100 flex items-center justify-center mb-4">
+              <AlertCircle size={32} className="text-sand-500" />
             </div>
-            <div>
-              <label className="label">修补日期</label>
-              <input
-                type="date"
-                className="input-field"
-                value={form.date}
-                onChange={(e) => setForm({ ...form, date: e.target.value })}
-              />
-            </div>
+            <h4 className="font-serif text-lg font-semibold text-teal-700 mb-2">
+              请先创建墙面档案
+            </h4>
+            <p className="text-teal-500 text-sm mb-6 max-w-sm mx-auto">
+              修补记录需要关联到具体的墙面，请先在"墙面档案"中录入墙面信息后，再记录修补。
+            </p>
+            <button onClick={onClose} className="btn-secondary flex items-center gap-2 mx-auto">
+              <LayoutGrid size={16} />
+              去创建墙面档案
+            </button>
           </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-140px)]">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="label">墙面</label>
+                <select
+                  className="input-field"
+                  value={form.wallId}
+                  onChange={(e) => setForm({ ...form, wallId: e.target.value })}
+                >
+                  {walls.map((w) => {
+                    const room = useStore.getState().getRoomById(w.roomId);
+                    return (
+                      <option key={w.id} value={w.id}>
+                        {room?.name} - {w.name}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+              <div>
+                <label className="label">修补日期</label>
+                <input
+                  type="date"
+                  className="input-field"
+                  value={form.date}
+                  max={today}
+                  onChange={(e) => setForm({ ...form, date: e.target.value })}
+                />
+              </div>
+            </div>
 
           <div>
             <label className="label">问题位置描述</label>

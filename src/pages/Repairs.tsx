@@ -17,9 +17,10 @@ import {
 import { Link } from 'react-router-dom';
 
 export default function Repairs() {
-  const { repairs, getWallById, getRoomById } = useStore();
+  const { repairs, walls, getWallById, getRoomById } = useStore();
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState<IssueType | 'all' | 'recurring'>('all');
+  const hasWalls = walls.length > 0;
 
   const filteredRepairs = repairs
     .filter((r) => {
@@ -51,10 +52,17 @@ export default function Repairs() {
             追踪每次修补的位置、材料和操作，识别反复问题区域
           </p>
         </div>
-        <button onClick={() => setShowForm(true)} className="btn-primary flex items-center gap-2">
-          <Plus size={18} />
-          记录修补
-        </button>
+        {hasWalls ? (
+          <button onClick={() => setShowForm(true)} className="btn-primary flex items-center gap-2">
+            <Plus size={18} />
+            记录修补
+          </button>
+        ) : (
+          <Link to="/walls" className="btn-primary flex items-center gap-2">
+            <Plus size={18} />
+            先创建墙面档案
+          </Link>
+        )}
       </div>
 
       <div className="flex items-center gap-2 mb-8 flex-wrap opacity-0 animate-fade-in-up" style={{ animationDelay: '80ms' }}>
@@ -94,9 +102,20 @@ export default function Repairs() {
             <Hammer size={28} className="text-teal-400" />
           </div>
           <p className="text-teal-500 mb-4">暂无修补记录</p>
-          <button onClick={() => setShowForm(true)} className="btn-primary">
-            记录第一次修补
-          </button>
+          {hasWalls ? (
+            <button onClick={() => setShowForm(true)} className="btn-primary">
+              记录第一次修补
+            </button>
+          ) : (
+            <div>
+              <p className="text-sand-500 text-sm mb-4">
+                请先在墙面档案中录入墙面信息后，再记录修补
+              </p>
+              <Link to="/walls" className="btn-primary">
+                去创建墙面档案
+              </Link>
+            </div>
+          )}
         </div>
       ) : (
         <div className="relative pl-4">

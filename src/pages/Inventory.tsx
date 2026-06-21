@@ -35,6 +35,10 @@ export default function Inventory() {
   const getOpenStatus = (paint: PaintInventory) => {
     const days = daysSince(paint.openDate);
     if (paint.remainingAmount <= 0) return { label: '已用完', color: 'text-teal-400 bg-cream-100', icon: AlertCircle };
+    if (days < 0) {
+      const daysLater = Math.abs(days);
+      return { label: `计划${daysLater}天后开封`, color: 'text-sand-500 bg-sand-100', icon: Calendar };
+    }
     if (days > 365) return { label: `开封${Math.floor(days / 30)}个月`, color: 'text-terracotta-600 bg-terracotta-100', icon: AlertCircle };
     if (days > 180) return { label: `开封${Math.floor(days / 30)}个月`, color: 'text-sand-500 bg-sand-100', icon: AlertCircle };
     return { label: `开封${days}天`, color: 'text-sage-500 bg-sage-100', icon: CheckCircle };

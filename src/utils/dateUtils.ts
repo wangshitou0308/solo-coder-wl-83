@@ -27,10 +27,16 @@ export function relativeDate(dateStr: string): string {
   const days = daysSince(dateStr);
   if (days === 0) return '今天';
   if (days === 1) return '昨天';
-  if (days < 7) return `${days}天前`;
-  if (days < 30) return `${Math.floor(days / 7)}周前`;
-  if (days < 365) return `${Math.floor(days / 30)}个月前`;
-  return `${Math.floor(days / 365)}年前`;
+  if (days > 0 && days < 7) return `${days}天前`;
+  if (days > 0 && days < 30) return `${Math.floor(days / 7)}周前`;
+  if (days > 0 && days < 365) return `${Math.floor(days / 30)}个月前`;
+  if (days > 0) return `${Math.floor(days / 365)}年前`;
+  const daysUntil = Math.abs(days);
+  if (daysUntil === 1) return '明天';
+  if (daysUntil < 7) return `${daysUntil}天后`;
+  if (daysUntil < 30) return `${Math.floor(daysUntil / 7)}周后`;
+  if (daysUntil < 365) return `${Math.floor(daysUntil / 30)}个月后`;
+  return `${Math.floor(daysUntil / 365)}年后`;
 }
 
 export function getCurrentSeason(): '春' | '夏' | '秋' | '冬' {

@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useStore } from '@/store/useStore';
 import type { PaintInventory } from '@/types';
-import { X, Trash2 } from 'lucide-react';
+import { X, Trash2, Info } from 'lucide-react';
+
+const today = new Date().toISOString().split('T')[0];
 
 interface PaintFormProps {
   onClose: () => void;
@@ -105,7 +107,13 @@ export default function PaintForm({ onClose, editPaint }: PaintFormProps) {
           </div>
 
           <div>
-            <label className="label">开封日期</label>
+            <div className="flex items-center justify-between">
+              <label className="label">开封日期</label>
+              <div className="flex items-center gap-1 text-xs text-teal-400">
+                <Info size={12} />
+                <span>可选择未来日期（计划开封）</span>
+              </div>
+            </div>
             <input
               type="date"
               className="input-field"
